@@ -1,8 +1,8 @@
 <template>
     <v-app>
         <v-main>
-            <router-view @scanner-success="handleScannerSuccess"
-                         @scanner-error="handleScannerError"/>
+            <router-view @success="handleSuccess"
+                         @error="handleError"/>
             <v-snackbar v-model="snackbarShown"
                         :color="snackbar.color">
                 {{ snackbar.message }}
@@ -12,11 +12,7 @@
 </template>
 
 <script>
-import axiosLib from 'axios';
-
-const axios = axiosLib.create({
-    baseURL: process.env.VUE_APP_API_URL,
-});
+import { requestTest } from './utils/api';
 
 export default {
     name: 'App',
@@ -28,19 +24,14 @@ export default {
         }
     }),
     async mounted() {
-        try {
-            const response = await axios.get('/medecins/1');
-            console.log(response.data);
-        } catch(err) {
-            console.log(err);
-        }
+        console.log(await requestTest());
     },
     methods: {
-        handleScannerSuccess(successMessage) {
-            this.showSnackbar(successMessage, 'success');
+        handleSuccess(message) {
+            this.showSnackbar(message, 'success');
         },
-        handleScannerError(errorMessage) {
-            this.showSnackbar(errorMessage, 'error');
+        handleError(message) {
+            this.showSnackbar(message, 'error');
         },
         showSnackbar(message, color) {
             this.snackbar = {

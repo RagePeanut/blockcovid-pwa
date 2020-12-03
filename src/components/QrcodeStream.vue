@@ -134,7 +134,6 @@ export default {
   },
 
   beforeDestroy() {
-      console.log("this is called");
     this.beforeResetCamera();
     this.stopScanning();
     this.destroyed = true;

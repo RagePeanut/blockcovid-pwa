@@ -34,7 +34,10 @@ export default {
             });
 
         messaging.onMessage(payload => {
-            console.log(payload);
+            const { title, body } = payload.notification;
+            new Notification(title, {
+                body,
+            });
         });
 
         // DEPRECATED, plus besoin de gérer la rotation des tokens

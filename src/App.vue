@@ -47,3 +47,11 @@ export default {
     },
 };
 </script>
+
+<style>
+/* Fix for snackbar showing out of range when the search bar is visible in some mobile browsers
+   (https://github.com/vuetifyjs/vuetify/issues/11781) */
+div.v-snack:not(.v-snack--absolute) {
+    height: 100%;
+}
+</style>

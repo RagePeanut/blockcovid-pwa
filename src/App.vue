@@ -12,10 +12,14 @@
 </template>
 
 <script>
+import FirebaseApi from './mixins/FirebaseApi';
 import { requestTest } from './utils/api';
 
 export default {
     name: 'App',
+    mixins: [
+        FirebaseApi,
+    ],
     data: () => ({
         snackbarShown: false,
         snackbar: {

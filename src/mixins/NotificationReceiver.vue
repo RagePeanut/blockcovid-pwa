@@ -3,7 +3,6 @@ import firebase from 'firebase/app'
 import 'firebase/app'
 import 'firebase/messaging'
 
-// https://juliensalinas.com/fr/vuejs-django-firebase-pwa-notifications-push/
 export default {
     methods: {
         saveNotificationToken(token) {

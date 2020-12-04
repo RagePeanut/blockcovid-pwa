@@ -12,14 +12,21 @@
 </template>
 
 <script>
-import FirebaseApi from './mixins/FirebaseApi';
+import NotificationReceiver from "./mixins/NotificationReceiver.vue";
+import OnlineStatus from './mixins/OnlineStatus';
 import { requestTest } from './utils/api';
 
 export default {
     name: 'App',
     mixins: [
-        FirebaseApi,
+        NotificationReceiver,
+        OnlineStatus,
     ],
+    watch: {
+        online() {
+            console.log(this.online ? "Online" : "Offline");
+        },
+    },
     data: () => ({
         snackbarShown: false,
         snackbar: {
@@ -49,7 +56,7 @@ export default {
 </script>
 
 <style>
-/* Fix for snackbar showing out of range when the search bar is visible in some mobile browsers
+/* Fix pour que la snackbar s'affiche sur l'écran même si la barre de recherche est visible sur mobile
    (https://github.com/vuetifyjs/vuetify/issues/11781) */
 div.v-snack:not(.v-snack--absolute) {
     height: 100%;

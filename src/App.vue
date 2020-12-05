@@ -35,11 +35,20 @@ export default {
                 this.handleWarning('Vous n\'êtes plus connecté à Internet');
             }
         },
+        async updatedFcmToken() {
+            try {
+                await this.$api.updateToken(this.fcmToken);
+            } catch(err) {
+                console.log(err);
+                this.handleError(err.message);
+            }
+        },
         async fcmToken() {
             if(localStorage.getItem('uuid')) return;
             try {
                 await this.$api.register(this.fcmToken);
             } catch(err) {
+                console.log(err);
                 this.handleError(err.message);
             }
         },

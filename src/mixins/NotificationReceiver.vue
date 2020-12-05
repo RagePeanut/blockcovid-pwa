@@ -8,6 +8,7 @@ import { persistStorage } from '../utils/misc';
 export default {
     data: () => ({
         fcmToken: null,
+        updatedFcmToken: null,
         canReceiveNotifications: null,
     }),
     watch: {
@@ -21,9 +22,10 @@ export default {
                 if(storedToken !== this.fcmToken) {
                     await persistStorage();
                     localStorage.setItem('fcm_token', this.fcmToken);
-                    // Si il y avait déjà une token dans le storage, on doit prévenir l'api que la token a changé
+                    // Si il y avait déjà une token dans le storage, et que la token a donc changé,
+                    // on set updatedFcmToken à sa valeur afin que des méthodes watch puissent y réagir
                     if(storedToken) {
-                        this.$api.updateToken(this.fcmToken);
+                        this.updatedFcmToken = this.fcmToken;
                     }
                 }
             }

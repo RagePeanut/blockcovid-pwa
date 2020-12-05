@@ -43,6 +43,12 @@ export default {
                 this.handleError(err.message);
             }
         },
+        canReceiveNotifications() {
+            console.log(this.canReceiveNotifications);
+            if(!this.canReceiveNotifications) {
+                this.handleError('Cette application nécessite que vous activiez les notifications');
+            }
+        },
     },
     data: () => ({
         snackbarShown: false,

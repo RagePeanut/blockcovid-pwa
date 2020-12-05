@@ -5,8 +5,43 @@ import 'firebase/messaging'
 
 export default {
     data: () => ({
-        fcmToken: '',
+        fcmToken: null,
+        canReceiveNotifications: null,
     }),
+    watch: {
+        async canReceiveNotifications() {
+            if(this.canReceiveNotifications && !this.fcmToken) {
+                this.fcmToken = await firebase.messaging().getToken({
+                    vapidKey: process.env.VUE_APP_FIREBASE_MESSAGING_KEY,
+                });
+                console.log('Token:', this.fcmToken);
+            }
+        }
+    },
+    methods: {
+        async requestPermission() {
+            const permission = await Notification.requestPermission();
+            if(permission === 'granted') {
+                this.canReceiveNotifications = true;
+                console.log('Notification permission granted.');
+            // Certains navigateurs (ex: Firefox) dismiss la demande de permission d'afficher des notifications
+            // en attendant que l'utilisateur réponde à la demande en renvoyant "default" en permission.
+            // On doit donc explicitement tester si elle est bien à "denied".
+            } else if(permission === 'denied') {
+                this.canReceiveNotifications = false;
+                console.log('Unable to get permission to notify.');
+            }
+            // Si le navigateur le supporte, on écoute les changements sur la permission d'afficher des notifications
+            // afin de pouvoir y réagir via une méthode watch dans un component
+            if(!navigator.permissions) return;
+            const self = this;
+            navigator.permissions.query({ name: 'notifications' }).then(permission => {
+                permission.onchange = function() {
+                    self.canReceiveNotifications = this.state === 'granted';
+                }
+            });
+        }
+    },
     mounted() {
         const config = {
             appId: process.env.VUE_APP_FIREBASE_APP_ID,
@@ -18,16 +53,7 @@ export default {
 
         const messaging = firebase.messaging();
 
-        messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_MESSAGING_KEY);
-
-        messaging.requestPermission()
-            .then(async () => {
-                console.log('Notification permission granted.');
-                this.fcmToken = await messaging.getToken();
-                console.log('Token:', this.fcmToken);
-            }).catch(err => {
-                console.log('Unable to get permission to notify.', err);
-            });
+        this.requestPermission();
 
         messaging.onMessage(payload => {
             const { title, body } = payload.notification;

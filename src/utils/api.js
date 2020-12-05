@@ -17,10 +17,12 @@ export default {
     },
     register: async (token) => {
         try {
-            const { data } = await axios.post('/citoyens/enregistrement', {
+            const response = await axios.post('/citoyens/enregistrement', {
                 token_fcm: token,
             });
-            localStorage.setItem('uuid', data.id_citoyen);
+            if(response.status === 200) {
+                localStorage.setItem('uuid', response.data.id_citoyen);
+            }
         } catch(err) {
             console.log(err);
             throw err;

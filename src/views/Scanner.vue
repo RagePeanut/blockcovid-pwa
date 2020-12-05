@@ -23,7 +23,7 @@ export default {
             // sa gestion inutile, nous devons vérifier nous-même si il s'agit d'une répétition
             if(this.decoded === decoded) return;
             this.decoded = decoded;
-            this.$emit('success', 'Décodé: ' + decoded);
+            this.$emit('success', this.decoded);
         },
         async onInit(initPromise) {
             try {

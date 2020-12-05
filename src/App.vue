@@ -2,7 +2,7 @@
     <v-app>
         <v-main>
             <router-view @success="handleSuccess"
-                         @error="handleError"/>
+                         @error="showError"/>
             <v-snackbar v-model="snackbarShown"
                         :color="snackbar.color">
                 {{ snackbar.message }}
@@ -30,9 +30,9 @@ export default {
     watch: {
         online() {
             if(this.online) {
-                this.handleInfo('Votre connection a été rétablie');
+                this.showInfo('Votre connection a été rétablie');
             } else {
-                this.handleWarning('Vous n\'êtes plus connecté à Internet');
+                this.showWarning('Vous n\'êtes plus connecté à Internet');
             }
         },
         async updatedFcmToken() {
@@ -40,7 +40,7 @@ export default {
                 await this.$api.updateToken(this.fcmToken);
             } catch(err) {
                 console.log(err);
-                this.handleError(err.message);
+                this.showError(err.message);
             }
         },
         async fcmToken() {
@@ -49,12 +49,12 @@ export default {
                 await this.$api.register(this.fcmToken);
             } catch(err) {
                 console.log(err);
-                this.handleError(err.message);
+                this.showError(err.message);
             }
         },
         canReceiveNotifications() {
             if(!this.canReceiveNotifications) {
-                this.handleError('Cette application nécessite que vous activiez les notifications');
+                this.showError('Cette application nécessite que vous activiez les notifications');
             }
         },
     },
@@ -69,21 +69,31 @@ export default {
         console.log(await this.$api.requestTest());
     },
     methods: {
-        handleSuccess(message) {
+        async handleSuccess(decoded) {
+            console.log('Decoded:', decoded);
+            try {
+                await this.$api.sendQrContent(decoded);
+                this.showSnackbar(decoded, 'success');
+            } catch(err) {
+                console.log(err);
+                this.showError(err.message);
+            }
+        },
+        showSuccess(message) {
             this.showSnackbar(message, 'success');
         },
-        handleInfo(message) {
+        showInfo(message) {
             this.showSnackbar(message, 'information');
         },
-        handleWarning(message) {
+        showWarning(message) {
             this.showSnackbar(message, 'warning')
         },
-        handleError(message) {
+        showError(message) {
             this.showSnackbar(message, 'error');
         },
         async showSnackbar(message, color) {
             // On doit fermer la snackbar actuelle avant d'afficher la nouvelle
-            // Sinon, le timer de la snackbar ne sera pas reset
+            // Sinon, le timer de la snackbar ne sera pas remis à zéro
             if(this.snackbarShown) {
                 this.hideSnackbar();
                 await this.$nextTick();

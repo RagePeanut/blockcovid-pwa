@@ -9,13 +9,17 @@ const axios = axiosLib.create({
 
 export default {
     sendQrContent: async (content) => {
-        const response = await axios.get("/qr-code", {
+        const { data } = await axios.get("/qr-code", {
             params: {
                 content,
-            }
+            },
+            validateStatus: status => status < 400 || status === 422,
         });
-        if(response.status === 200) {
-            return response.data.message;
+        if(data?.status !== 200) {
+            if(data?.status === 422) {
+                throw new Error(data.message);
+            }
+            throw new HttpError(data.message, data.status);
         }
     },
     register: async (token) => {

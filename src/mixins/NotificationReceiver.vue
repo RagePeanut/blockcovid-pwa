@@ -3,6 +3,8 @@ import firebase from 'firebase/app'
 import 'firebase/app'
 import 'firebase/messaging'
 
+import { persistStorage } from '../utils/misc';
+
 export default {
     data: () => ({
         fcmToken: null,
@@ -15,6 +17,15 @@ export default {
                     vapidKey: process.env.VUE_APP_FIREBASE_MESSAGING_KEY,
                 });
                 console.log('Token:', this.fcmToken);
+                const storedToken = localStorage.getItem('fcm_token');
+                if(storedToken !== this.fcmToken) {
+                    await persistStorage();
+                    localStorage.setItem('fcm_token', this.fcmToken);
+                    // Si il y avait déjà une token dans le storage, on doit prévenir l'api que la token a changé
+                    if(storedToken) {
+                        this.$api.updateToken(this.fcmToken);
+                    }
+                }
             }
         }
     },

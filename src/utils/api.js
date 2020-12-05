@@ -1,5 +1,8 @@
 import axiosLib from 'axios';
 
+import HttpError from '../errors/HttpError';
+import { persistStorage } from '../utils/misc';
+
 const axios = axiosLib.create({
     baseURL: process.env.VUE_APP_API_URL,
 });
@@ -16,17 +19,14 @@ export default {
         }
     },
     register: async (token) => {
-        try {
-            const response = await axios.post('/citoyens/enregistrement', {
-                token_fcm: token,
-            });
-            if(response.status === 200) {
-                localStorage.setItem('uuid', response.data.id_citoyen);
-            }
-        } catch(err) {
-            console.log(err);
-            throw err;
+        const { data } = await axios.post('/citoyens/enregistrement', {
+            token_fcm: token,
+        });
+        if(data?.status !== 200) {
+            throw new HttpError(data.message, data.status);
         }
+        await persistStorage();
+        localStorage.setItem('uuid', data.id_citoyen);
     },
     requestTest: async () => {
         try {
@@ -36,4 +36,15 @@ export default {
             return err;
         }
     },
+    updateToken: async (token) => {
+        const uuid = localStorage.getItem('uuid');
+        if(!uuid) throw new Error('Erreur critique, application dans un état imprévu');
+        const { data } = await axios.put('/citoyens/mise_a_jour', {
+            id_citoyen: uuid,
+            token_fcm: token,
+        });
+        if(data?.status !== 200) {
+            throw new HttpError(data.message, data.status);
+        }
+    }
 }

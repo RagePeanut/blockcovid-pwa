@@ -6,6 +6,12 @@
             <v-snackbar v-model="snackbarShown"
                         :color="snackbar.color">
                 {{ snackbar.message }}
+                <template v-slot:action>
+                    <v-btn @click="hideSnackbar"
+                           text>
+                        Close
+                    </v-btn>
+                </template>
             </v-snackbar>
         </v-main>
     </v-app>
@@ -24,14 +30,18 @@ export default {
     ],
     watch: {
         online() {
-            console.log(this.online ? "Online" : "Offline");
+            if(this.online) {
+                this.handleInfo('Votre connection a été rétablie');
+            } else {
+                this.handleWarning('Vous n\'êtes plus connecté à Internet');
+            }
         },
     },
     data: () => ({
         snackbarShown: false,
         snackbar: {
             message: '',
-            color: 'success',
+            color: '',
         }
     }),
     async mounted() {
@@ -41,16 +51,31 @@ export default {
         handleSuccess(message) {
             this.showSnackbar(message, 'success');
         },
+        handleInfo(message) {
+            this.showSnackbar(message, 'information');
+        },
+        handleWarning(message) {
+            this.showSnackbar(message, 'warning')
+        },
         handleError(message) {
             this.showSnackbar(message, 'error');
         },
-        showSnackbar(message, color) {
+        async showSnackbar(message, color) {
+            // On doit fermer la snackbar actuelle avant d'afficher la nouvelle
+            // Sinon, le timer de la snackbar ne sera pas reset
+            if(this.snackbarShown) {
+                this.hideSnackbar();
+                await this.$nextTick();
+            }
             this.snackbar = {
                 message,
                 color,
             };
             this.snackbarShown = true;
-        }
+        },
+        hideSnackbar() {
+            this.snackbarShown = false;
+        },
     },
 };
 </script>

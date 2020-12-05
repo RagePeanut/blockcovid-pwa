@@ -2,12 +2,12 @@
     <v-app>
         <v-main>
             <router-view @success="handleSuccess"
-                         @error="showError"/>
+                         @error="queueErrorSnackbar"/>
             <v-snackbar v-model="snackbarShown"
                         :color="snackbar.color">
                 {{ snackbar.message }}
                 <template v-slot:action>
-                    <v-btn @click="hideSnackbar"
+                    <v-btn @click="hideCurrentSnackbar"
                            text>
                         Close
                     </v-btn>
@@ -20,6 +20,7 @@
 <script>
 import NotificationReceiver from "./mixins/NotificationReceiver.vue";
 import OnlineStatus from './mixins/OnlineStatus';
+import SnackbarQueue from './mixins/SnackbarQueue';
 import offlineQrCodes from './utils/offlineQrCodes';
 
 export default {
@@ -27,14 +28,15 @@ export default {
     mixins: [
         NotificationReceiver,
         OnlineStatus,
+        SnackbarQueue,
     ],
     watch: {
         online() {
             if(this.online) {
-                this.showInfo('Votre connection a été rétablie');
+                this.queueInfoSnackbar('Votre connection a été rétablie');
                 this.handleOfflineQrCodes();
             } else {
-                this.showWarning('Vous n\'êtes plus connecté à Internet');
+                this.queueWarningSnackbar('Vous n\'êtes plus connecté à Internet');
             }
         },
         async updatedFcmToken() {
@@ -42,7 +44,7 @@ export default {
                 await this.$api.updateToken(this.fcmToken);
             } catch(err) {
                 console.log(err);
-                this.showError(err.message);
+                this.queueErrorSnackbar(err.message);
             }
         },
         async fcmToken() {
@@ -51,27 +53,14 @@ export default {
                 await this.$api.register(this.fcmToken);
             } catch(err) {
                 console.log(err);
-                this.showError(err.message);
+                this.queueErrorSnackbar(err.message);
             }
         },
         canReceiveNotifications() {
             if(!this.canReceiveNotifications) {
-                this.showError('Cette application nécessite que vous activiez les notifications');
+                this.queueErrorSnackbar('Cette application nécessite que vous activiez les notifications');
             }
         },
-    },
-    data: () => ({
-        snackbarShown: false,
-        snackbar: {
-            message: '',
-            color: '',
-        }
-    }),
-    async mounted() {
-        if(this.online) {
-            this.handleOfflineQrCodes();
-        }
-        console.log(await this.$api.requestTest());
     },
     methods: {
         async handleOfflineQrCodes() {
@@ -87,9 +76,9 @@ export default {
                     }
                 }
                 if(errorCount > 0) {
-                    this.showWarning(errorCount + ' des ' + qrCodes.length + ' codes QR scannés en hors-ligne étaient invalides');
+                    this.queueWarningSnackbar(errorCount + ' des ' + qrCodes.length + ' codes QR scannés en hors-ligne étaient invalides');
                 } else {
-                    this.showSuccess('Vos scans fait en hors-ligne ont bien été envoyés');
+                    this.queueSuccessSnackbar('Vos scans fait en hors-ligne ont bien été envoyés');
                 }
             }
         },
@@ -97,45 +86,23 @@ export default {
             console.log('Decoded:', decoded);
             if(!this.online) {
                 offlineQrCodes.add(decoded);
-                this.showInfo('Votre scan a été pris en compte et sera envoyé lorsque vous serez en ligne');
+                this.queueInfoSnackbar('Votre scan a été pris en compte et sera envoyé lorsque vous serez en ligne');
                 return;
             }
             try {
                 await this.$api.sendQrCode(decoded);
-                this.showSuccess('Votre scan a bien été envoyé');
+                this.queueSuccessSnackbar('Votre scan a bien été envoyé');
             } catch(err) {
                 console.log(err);
-                this.showError(err.message);
+                this.queueErrorSnackbar(err.message);
             }
         },
-        showSuccess(message) {
-            this.showSnackbar(message, 'success');
-        },
-        showInfo(message) {
-            this.showSnackbar(message, 'information');
-        },
-        showWarning(message) {
-            this.showSnackbar(message, 'warning')
-        },
-        showError(message) {
-            this.showSnackbar(message, 'error');
-        },
-        async showSnackbar(message, color) {
-            // On doit fermer la snackbar actuelle avant d'afficher la nouvelle
-            // Sinon, le timer de la snackbar ne sera pas remis à zéro
-            if(this.snackbarShown) {
-                this.hideSnackbar();
-                await this.$nextTick();
-            }
-            this.snackbar = {
-                message,
-                color,
-            };
-            this.snackbarShown = true;
-        },
-        hideSnackbar() {
-            this.snackbarShown = false;
-        },
+    },
+    async mounted() {
+        if(this.online) {
+            this.handleOfflineQrCodes();
+        }
+        console.log(await this.$api.requestTest());
     },
 };
 </script>

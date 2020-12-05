@@ -20,7 +20,6 @@
 <script>
 import NotificationReceiver from "./mixins/NotificationReceiver.vue";
 import OnlineStatus from './mixins/OnlineStatus';
-import { requestTest } from './utils/api';
 
 export default {
     name: 'App',
@@ -36,6 +35,14 @@ export default {
                 this.handleWarning('Vous n\'êtes plus connecté à Internet');
             }
         },
+        async fcmToken() {
+            if(localStorage.getItem('uuid')) return;
+            try {
+                await this.$api.register(this.fcmToken);
+            } catch(err) {
+                this.handleError(err.message);
+            }
+        },
     },
     data: () => ({
         snackbarShown: false,
@@ -45,7 +52,7 @@ export default {
         }
     }),
     async mounted() {
-        console.log(await requestTest());
+        console.log(await this.$api.requestTest());
     },
     methods: {
         handleSuccess(message) {

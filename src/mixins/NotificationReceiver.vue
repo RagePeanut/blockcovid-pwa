@@ -4,11 +4,9 @@ import 'firebase/app'
 import 'firebase/messaging'
 
 export default {
-    methods: {
-        saveNotificationToken(token) {
-            console.log('Fake sending token:', token);
-        },
-    },
+    data: () => ({
+        fcmToken: '',
+    }),
     mounted() {
         const config = {
             appId: process.env.VUE_APP_FIREBASE_APP_ID,
@@ -25,9 +23,8 @@ export default {
         messaging.requestPermission()
             .then(async () => {
                 console.log('Notification permission granted.');
-                const token = await messaging.getToken();
-                console.log('New token created:', token);
-                this.saveNotificationToken(token);
+                this.fcmToken = await messaging.getToken();
+                console.log('Token:', this.fcmToken);
             }).catch(err => {
                 console.log('Unable to get permission to notify.', err);
             });
@@ -42,9 +39,8 @@ export default {
         // DEPRECATED, plus besoin de gérer la rotation des tokens
         // messaging.onTokenRefresh(async () => {
         //     try {
-        //         const token = await messaging.getToken();
-        //         console.log('Token refreshed: ', newToken);
-        //         this.saveNotificationToken(newToken);
+        //         this.fcmToken = await messaging.getToken();
+        //         console.log('Token refreshed: ', this.fcmToken);
         //     } catch(err) {
         //         console.log('Unable to retrieve refreshed token ', err);
         //     }

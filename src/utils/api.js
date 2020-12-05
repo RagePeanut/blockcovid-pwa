@@ -1,17 +1,18 @@
-import axiosLib from 'axios';
+import Axios from 'axios';
 
 import HttpError from '../errors/HttpError';
 import { persistStorage } from '../utils/misc';
 
-const axios = axiosLib.create({
+const axios = Axios.create({
     baseURL: process.env.VUE_APP_API_URL,
 });
 
 export default {
-    sendQrContent: async (content) => {
+    sendQrCode: async (content, date) => {
         const { data } = await axios.get("/qr-code", {
             params: {
                 content,
+                date: date || Date.now(),
             },
             validateStatus: status => status < 400 || status === 422,
         });

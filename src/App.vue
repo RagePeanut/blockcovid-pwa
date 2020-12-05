@@ -20,6 +20,7 @@
 <script>
 import NotificationReceiver from "./mixins/NotificationReceiver.vue";
 import OnlineStatus from './mixins/OnlineStatus';
+import offlineQrCodes from './utils/offlineQrCodes';
 
 export default {
     name: 'App',
@@ -31,6 +32,7 @@ export default {
         online() {
             if(this.online) {
                 this.showInfo('Votre connection a été rétablie');
+                this.handleOfflineQrCodes();
             } else {
                 this.showWarning('Vous n\'êtes plus connecté à Internet');
             }
@@ -66,14 +68,41 @@ export default {
         }
     }),
     async mounted() {
+        if(this.online) {
+            this.handleOfflineQrCodes();
+        }
         console.log(await this.$api.requestTest());
     },
     methods: {
+        async handleOfflineQrCodes() {
+            const qrCodes = await offlineQrCodes.getAll();
+            if(qrCodes.length > 0) {
+                let errorCount = 0;
+                for(let qr of qrCodes) {
+                    try {
+                        await this.$api.sendQrCode(qr.content, qr.date);
+                        offlineQrCodes.delete(qr.content);
+                    } catch {
+                        errorCount++;
+                    }
+                }
+                if(errorCount > 0) {
+                    this.showWarning(errorCount + ' des ' + qrCodes.length + ' codes QR scannés en hors-ligne étaient invalides');
+                } else {
+                    this.showSuccess('Vos scans fait en hors-ligne ont bien été envoyés');
+                }
+            }
+        },
         async handleSuccess(decoded) {
             console.log('Decoded:', decoded);
+            if(!this.online) {
+                offlineQrCodes.add(decoded);
+                this.showInfo('Votre scan a été pris en compte et sera envoyé lorsque vous serez en ligne');
+                return;
+            }
             try {
-                await this.$api.sendQrContent(decoded);
-                this.showSnackbar(decoded, 'success');
+                await this.$api.sendQrCode(decoded);
+                this.showSuccess('Votre scan a bien été envoyé');
             } catch(err) {
                 console.log(err);
                 this.showError(err.message);

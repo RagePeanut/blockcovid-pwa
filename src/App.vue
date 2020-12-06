@@ -34,7 +34,12 @@ export default {
         online() {
             if(this.online) {
                 this.queueInfoSnackbar('Votre connection a été rétablie');
-                this.handleOfflineQrCodes();
+                // Gestion du passage en online alors que l'application a été lancée en offline
+                if(!localStorage.getItem('fcm_token')) {
+                    this.getToken();
+                } else {
+                    this.handleOfflineQrCodes();
+                }
             } else {
                 this.queueWarningSnackbar('Vous n\'êtes plus connecté à Internet');
             }
@@ -58,6 +63,8 @@ export default {
             if(localStorage.getItem('uuid')) return;
             try {
                 await this.$api.register(this.fcmToken);
+                // Gestion du passage en online alors que l'application a été lancée en offline
+                this.handleOfflineQrCodes();
             } catch(err) {
                 console.log(err);
                 this.queueErrorSnackbar(err.message);

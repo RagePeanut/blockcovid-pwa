@@ -12,7 +12,12 @@ export default {
         canReceiveNotifications: null,
     }),
     watch: {
-        async canReceiveNotifications() {
+        canReceiveNotifications() {
+            this.getToken();
+        }
+    },
+    methods: {
+        async getToken() {
             if(this.canReceiveNotifications && !this.fcmToken) {
                 this.fcmToken = await firebase.messaging().getToken({
                     vapidKey: process.env.VUE_APP_FIREBASE_MESSAGING_KEY,
@@ -29,9 +34,7 @@ export default {
                     }
                 }
             }
-        }
-    },
-    methods: {
+        },
         async requestPermission() {
             const permission = await Notification.requestPermission();
             if(permission === 'granted') {

@@ -9,7 +9,7 @@ const axios = Axios.create({
 
 export default {
     sendQrCode: async (content, date) => {
-        const { data } = await axios.get("/citoyens/qr-code", {
+        const { data } = await axios.post("/citoyens/qr-code", {
             params: {
                 id_citoyen: localStorage.getItem('uuid'),
                 content,

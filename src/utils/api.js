@@ -9,8 +9,9 @@ const axios = Axios.create({
 
 export default {
     sendQrCode: async (content, date) => {
-        const { data } = await axios.get("/qr-code", {
+        const { data } = await axios.get("/citoyens/qr-code", {
             params: {
+                id_citoyen: localStorage.getItem('uuid'),
                 content,
                 date: date || Date.now(),
             },
@@ -45,8 +46,11 @@ export default {
         const uuid = localStorage.getItem('uuid');
         if(!uuid) throw new Error('Erreur critique, application dans un état imprévu');
         const { data } = await axios.put('/citoyens/mise_a_jour', {
-            id_citoyen: uuid,
             token_fcm: token,
+        }, {
+            params: {
+                id_citoyen: uuid,
+            },
         });
         if(data?.status !== 200) {
             throw new HttpError(data.message, data.status);

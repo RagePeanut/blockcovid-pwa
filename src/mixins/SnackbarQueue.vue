@@ -7,13 +7,19 @@ export default {
             color: '',
         },
         snackbarQueue: [],
+        queuedSnackbar: null,
     }),
     watch: {
         snackbarShown() {
             this.showSnackbar();
         },
-        snackbarQueue() {
-            this.showSnackbar();
+        queuedSnackbar() {
+            console.log("Queued", this.snackbarShown, this.snackbarQueue.length);
+            if(this.queuedSnackbar) {
+                this.snackbarQueue.push(this.queuedSnackbar);
+                this.queuedSnackbar = null;
+                this.showSnackbar();
+            }
         }
     },
     methods: {
@@ -28,10 +34,10 @@ export default {
             this.snackbarShown = false;
         },
         queueSnackbar(message, color) {
-            this.snackbarQueue.push({
+            this.queuedSnackbar = {
                 message,
                 color,
-            });
+            };
         },
         queueSuccessSnackbar(message) {
             this.queueSnackbar(message, 'success');

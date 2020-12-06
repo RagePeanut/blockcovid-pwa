@@ -42,9 +42,7 @@ export default {
             return err;
         }
     },
-    updateToken: async (token) => {
-        const uuid = localStorage.getItem('uuid');
-        if(!uuid) throw new Error('Erreur critique, application dans un état imprévu');
+    updateToken: async (token, uuid) => {
         const { data } = await axios.put('/citoyens/mise-a-jour', {
             token_fcm: token,
         }, {

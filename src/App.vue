@@ -41,7 +41,14 @@ export default {
         },
         async updatedFcmToken() {
             try {
-                await this.$api.updateToken(this.fcmToken);
+                const uuid = localStorage.getItem('uuid');
+                if(uuid) {
+                    await this.$api.updateToken(this.fcmToken, uuid);
+                // Ne devrait arriver que si le citoyen a manuellement supprimé
+                // son uuid dans le storage
+                } else {
+                    await this.$api.register(this.fcmToken);
+                }
             } catch(err) {
                 console.log(err);
                 this.queueErrorSnackbar(err.message);

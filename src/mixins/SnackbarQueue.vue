@@ -43,7 +43,7 @@ export default {
             this.queueSnackbar(message, 'success');
         },
         queueInfoSnackbar(message) {
-            this.queueSnackbar(message, 'informatin');
+            this.queueSnackbar(message, 'information');
         },
         queueWarningSnackbar(message) {
             this.queueSnackbar(message, 'warning');

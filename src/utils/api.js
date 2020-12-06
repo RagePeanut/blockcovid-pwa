@@ -36,7 +36,7 @@ export default {
     },
     requestTest: async () => {
         try {
-            const { data } = await axios.get('/medecins/1');
+            const { data } = await axios.get('/tests/medecins/1');
             return data;
         } catch(err) {
             return err;

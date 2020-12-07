@@ -1,6 +1,7 @@
 import Axios from 'axios';
 
 import HttpError from '../errors/HttpError';
+import InvalidQrCodeError from '../errors/InvalidQrCodeError';
 import { persistStorage } from '../utils/misc';
 
 const axios = Axios.create({
@@ -13,7 +14,7 @@ export default {
         try {
             ({ id_qr_code, type_createur } = JSON.parse(content));
         } catch(err) {
-            throw new Error('QR code invalide');
+            throw new InvalidQrCodeError();
         }
 
         try {
@@ -27,7 +28,7 @@ export default {
                 validateStatus: status => status < 400 || status === 422,
             });
             if(response.status === 422) {
-                throw new Error('QR code invalide');
+                throw new InvalidQrCodeError();
             }
         } catch(err) {
             throw new HttpError(err.response.message, err.response.status);

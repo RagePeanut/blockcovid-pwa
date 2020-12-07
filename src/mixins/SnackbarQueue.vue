@@ -14,7 +14,6 @@ export default {
             this.showSnackbar();
         },
         queuedSnackbar() {
-            console.log("Queued", this.snackbarShown, this.snackbarQueue.length);
             if(this.queuedSnackbar) {
                 this.snackbarQueue.push(this.queuedSnackbar);
                 this.queuedSnackbar = null;

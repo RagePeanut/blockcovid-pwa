@@ -9,20 +9,30 @@ const axios = Axios.create({
 
 export default {
     sendQrCode: async (content, date) => {
-        const { data } = await axios.post("/citoyens/qr-code", {
-            params: {
-                id_citoyen: localStorage.getItem('uuid'),
-                content,
-                date: date || Date.now(),
-            },
-            validateStatus: status => status < 400 || status === 422,
-        });
-        if(data?.status !== 200) {
-            if(data?.status === 422) {
-                throw new Error(data.message);
-            }
-            throw new HttpError(data.message, data.status);
+        let id_qr_code, type_createur;
+        try {
+            ({ id_qr_code, type_createur } = JSON.parse(content));
+        } catch(err) {
+            throw new Error('QR code invalide');
         }
+
+        try {
+            const response = await axios.post("/citoyens/qr-code", null, {
+                params: {
+                    id_citoyen: localStorage.getItem('uuid'),
+                    id_qr_code,
+                    type_createur,
+                    date_entree: date || new Date().toISOString(),
+                },
+                validateStatus: status => status < 400 || status === 422,
+            });
+            if(response.status === 422) {
+                throw new Error('QR code invalide');
+            }
+        } catch(err) {
+            throw new HttpError(err.response.message, err.response.status);
+        }
+        
     },
     register: async (token) => {
         const { data } = await axios.post('/citoyens/enregistrement', {
@@ -33,14 +43,6 @@ export default {
         }
         await persistStorage();
         localStorage.setItem('uuid', data.id_citoyen);
-    },
-    requestTest: async () => {
-        try {
-            const { data } = await axios.get('/tests/medecins/1');
-            return data;
-        } catch(err) {
-            return err;
-        }
     },
     updateToken: async (token, uuid) => {
         const { data } = await axios.put('/citoyens/mise-a-jour', {

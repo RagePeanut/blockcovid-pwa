@@ -11,7 +11,7 @@ export default {
         try {
             await db.qrCodes.add({
                 content,
-                date: Date.now(),
+                date: new Date().toISOString(),
             });
         } catch {
             // Silent catch

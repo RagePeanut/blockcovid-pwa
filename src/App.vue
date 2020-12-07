@@ -116,7 +116,6 @@ export default {
         if(this.online) {
             this.handleOfflineQrCodes();
         }
-        console.log(await this.$api.requestTest());
     },
 };
 </script>

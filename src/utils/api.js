@@ -22,7 +22,7 @@ async function sendQrCode(content, date) {
                 id_citoyen: localStorage.getItem('uuid'),
                 id_qr_code,
                 type_createur,
-                date_entree: date || new Date().toISOString(),
+                date_scan: date || new Date().toISOString(),
             },
         });
     } catch(err) {

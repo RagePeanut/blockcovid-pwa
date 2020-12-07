@@ -1,6 +1,5 @@
 import Scanner from '@/views/Scanner.vue';
 import { shallowMount } from '@vue/test-utils';
-import { QrcodeStream } from 'vue-qrcode-reader';
 
 const setHistoryLength = (length) => {
     delete window.history;

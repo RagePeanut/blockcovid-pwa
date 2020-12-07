@@ -28,6 +28,8 @@ async function sendQrCode(content, date) {
     } catch(err) {
         if(err.response.status === 422) {
             throw new InvalidQrCodeError();
+        } else if(err.response.status === 401) {
+            throw new Error('Ce code QR a déjà été scanné');
         }
         throw new HttpError(err.response.message || err.message, err.response.status);
     }
@@ -39,7 +41,7 @@ async function register(token) {
             token_fcm: token,
         });
         await persistStorage();
-        localStorage.setItem('uuid', response.id_citoyen);
+        localStorage.setItem('uuid', response.data.id_citoyen);
     } catch(err) {
         throw new HttpError(err.response.message || err.message, err.response.status);
     }

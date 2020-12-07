@@ -1,2 +1,4 @@
 import Vue from 'vue';
-Vue.config.productionTip = false;
+import Vuetify from 'vuetify';
+
+Vue.use(Vuetify);

@@ -4,7 +4,8 @@
 </template>
 
 <script>
-import QrcodeStream from '../components/QrcodeStream';
+// import QrcodeStream from '../components/QrcodeStream';
+import { QrcodeStream } from 'vue-qrcode-reader';
 
 export default {
     name: 'Scanner',

@@ -26,12 +26,13 @@ async function sendQrCode(content, date) {
             },
         });
     } catch(err) {
-        if(err.response.status === 422) {
+        const status = err.response?.status;
+        if(status === 422) {
             throw new InvalidQrCodeError();
-        } else if(err.response.status === 401) {
+        } else if(status === 401) {
             throw new Error('Ce code QR a déjà été scanné');
         }
-        throw new HttpError(err.response.message || err.message, err.response.status);
+        throw new HttpError(err.response?.message || err.message, status);
     }
 }
 
@@ -43,7 +44,7 @@ async function register(token) {
         await persistStorage();
         localStorage.setItem('uuid', response.data.id_citoyen);
     } catch(err) {
-        throw new HttpError(err.response.message || err.message, err.response.status);
+        throw new HttpError(err.response?.message || err.message, err.response?.status);
     }
 }
 
@@ -57,13 +58,14 @@ async function updateToken(token, uuid) {
             },
         });
     } catch(err) {
-        if(err.response.status === 422) {
+        const status = err.response?.status;
+        if(status === 422) {
             // L'ID citoyen a été altéré par l'utilisateur, on n'a pas d'autre choix que
             // d'en demander un autre en passant la nouvelle token
             register(token);
             throw new Error('ID citoyen invalide');
         }
-        throw new HttpError(err.response.message || err.message, err.response.status);
+        throw new HttpError(err.response?.message || err.message, status);
     }
 }
 

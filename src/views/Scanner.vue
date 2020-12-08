@@ -4,7 +4,7 @@
             <v-container fill-height v-if="loading">
                 <v-layout align-center justify-center>
                     <div class="d-flex flex-column align-center">
-                        <h1 class="primary--text display-1 pb-4">Lancement de la caméra...</h1>
+                        <h1 class="primary--text loading-text pb-4 text-center">Lancement de la caméra...</h1>
                         <v-progress-circular indeterminate color="primary" :size="40" :width="3"/>
                     </div>
                 </v-layout>
@@ -62,7 +62,7 @@ export default {
                 }
                 this.navigateBack();
             } finally {
-                this.loading = false;
+                // this.loading = false;
             }
         },
         navigateBack() {
@@ -71,3 +71,9 @@ export default {
     },
 }
 </script>
+
+<style lang="sass">
+.loading-text
+    font-size: 1.8rem
+    font-weight: normal
+</style>

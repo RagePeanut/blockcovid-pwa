@@ -32,6 +32,27 @@ describe('Scanner.vue', () => {
         expect(wrapper.exists()).toBe(true); 
     });
 
+    describe('switchTorch is called', () => {
+        it('sets torchActive to its opposite value', () => {
+            // Action
+            wrapper.vm.switchTorch();
+            // Test
+            expect(wrapper.vm.$data.torchActive).toBe(true);
+
+            // Action
+            wrapper.vm.switchTorch();
+            // Test
+            expect(wrapper.vm.$data.torchActive).toBe(false);
+        });
+
+        it('sets camera to off', () => {
+            // Action
+            wrapper.vm.switchTorch();
+            // Test
+            expect(wrapper.vm.$data.camera).toBe('off');
+        });
+    });
+
     describe('navigateBack is called', () => {
         it('goes to the previous page when the history length is higher than 1', () => {
             // Setup
@@ -61,7 +82,7 @@ describe('Scanner.vue', () => {
             // Action
             wrapper.vm.onDecode('');
             // Test
-            expect(wrapper.vm.$data.decoded).toEqual('previouslyDecoded');
+            expect(wrapper.vm.$data.decoded).toBe('previouslyDecoded');
         });
 
         it('doesn\'t emit a success event when the argument is empty', async () => {
@@ -92,7 +113,7 @@ describe('Scanner.vue', () => {
             // Action
             wrapper.vm.onDecode('decoded');
             // Test
-            expect(wrapper.vm.$data.decoded).toEqual('decoded');
+            expect(wrapper.vm.$data.decoded).toBe('decoded');
         });
 
         it('emits a success event with the correct data', async () => {
@@ -129,6 +150,17 @@ describe('Scanner.vue', () => {
             await wrapper.vm.onInit(Promise.reject(new Error()));
             // Test
             expect(wrapper.vm.navigateBack).toHaveBeenCalled();
+        });
+
+        it('sets the camera to auto when it is set to off', async () => {
+            // Setup
+            wrapper.setData({
+                camera: 'off',
+            });
+            // Action
+            await wrapper.vm.onInit(Promise.resolve());
+            // Test
+            expect(wrapper.vm.$data.camera).toBe('auto');
         });
     });
 });

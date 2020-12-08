@@ -15,7 +15,7 @@ export default {
     name: 'CameraOverlay',
     props: [
         'torchActive',
-        'torchSupported'
+        'torchSupported',
     ],
     methods: {
         torchButtonClicked() {

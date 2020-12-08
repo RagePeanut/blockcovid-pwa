@@ -1,7 +1,8 @@
 <template>
     <qrcode-stream @decode="onDecode"
-                  @init="onInit"
-                  :torch="torchActive">
+                   @init="onInit"
+                   :torch="torchActive"
+                   :camera="camera">
         <v-container fill-height>
             <v-layout align-center justify-center>
                 <CameraLoading v-if="loading"/>
@@ -31,9 +32,13 @@ export default {
         loading: true,
         torchSupported: false,
         torchActive: false,
+        camera: 'auto',
     }),
     methods: {
         switchTorch() {
+            // On met la caméra à off afin d'avoir un freeze frame
+            // Sans ça, le background serait affiché le temps du chargement de la flashlight (quelques secondes)
+            this.camera = 'off';
             this.torchActive = !this.torchActive;
         },
         onDecode(decoded) {
@@ -73,6 +78,11 @@ export default {
                 }
                 this.navigateBack();
             } finally {
+                // Si la caméra est à off, c'est qu'on a voulu une freeze frame pour un chargement
+                // Maintenant que c'est chargé, on peut remettre la caméra en automatique
+                if(this.camera === 'off') {
+                    this.camera = 'auto';
+                }
                 this.loading = false;
             }
         },

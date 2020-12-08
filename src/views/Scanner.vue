@@ -1,6 +1,15 @@
 <template>
         <QrcodeStream @decode="onDecode"
-                      @init="onInit"/>
+                      @init="onInit">
+            <v-container fill-height v-if="loading">
+                <v-layout align-center justify-center>
+                    <div class="d-flex flex-column align-center">
+                        <h1 class="primary--text display-1 pb-4">Lancement de la caméra...</h1>
+                        <v-progress-circular indeterminate color="primary" :size="40" :width="3"/>
+                    </div>
+                </v-layout>
+            </v-container>
+        </QrcodeStream>
 </template>
 
 <script>
@@ -14,6 +23,7 @@ export default {
     },
     data: () => ({
         decoded: '',
+        loading: true,
     }),
     methods: {
         onDecode(decoded) {
@@ -38,6 +48,7 @@ export default {
                         this.$emit('error', 'Aucune caméra trouvée');
                         break;
                     case 'NotSupportedError':
+                    case 'InsecureContextError':
                         this.$emit('error', 'Veuillez visiter cette page en HTTPS');
                         break;
                     case 'OverconstrainedError':
@@ -50,6 +61,8 @@ export default {
                         this.$emit('error', 'Erreur inconnue: ' + error.name);
                 }
                 this.navigateBack();
+            } finally {
+                this.loading = false;
             }
         },
         navigateBack() {

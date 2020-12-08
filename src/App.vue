@@ -4,7 +4,8 @@
             <router-view @success="handleSuccess"
                          @error="queueErrorSnackbar"/>
             <v-snackbar v-model="snackbarShown"
-                        :color="snackbar.color">
+                        :color="snackbar.color"
+                        class="pb-4">
                 {{ snackbar.message }}
                 <template v-slot:action>
                     <v-btn @click="hideCurrentSnackbar"
@@ -125,5 +126,8 @@ export default {
    (https://github.com/vuetifyjs/vuetify/issues/11781) */
 div.v-snack:not(.v-snack--absolute) {
     height: 100%;
+}
+.v-application {
+    background-color: #6184D8 !important;
 }
 </style>

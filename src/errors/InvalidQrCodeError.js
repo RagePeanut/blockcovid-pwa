@@ -1,6 +1,6 @@
 export default class InvalidQrCodeError extends Error {
     constructor() {
-        super('QR code invalide');
+        super('Code QR invalide');
         this.name = 'InvalidQrCodeError';
     }
 }

@@ -4,7 +4,8 @@ import AlreadyScannedError from "../errors/AlreadyScannedError";
 import HttpError from '../errors/HttpError';
 import InvalidCitoyenIdError from "../errors/InvalidCitoyenIdError";
 import InvalidQrCodeError from '../errors/InvalidQrCodeError';
-import { persistStorage } from '../utils/misc';
+import { persistStorage } from './misc';
+import offlineQrCodes from './offlineQrCodes';
 
 const axios = Axios.create({
     baseURL: process.env.VUE_APP_API_URL,
@@ -18,13 +19,15 @@ async function sendQrCode(content, date) {
         throw new InvalidQrCodeError();
     }
 
+    const isoDate = date || new Date().toISOString();
+
     try {
         await axios.post("/citoyens/qr-code", null, {
             params: {
                 id_citoyen: localStorage.getItem('uuid'),
                 id_qr_code,
                 type_createur,
-                date_scan: date || new Date().toISOString(),
+                date_scan: isoDate,
             },
         });
     } catch(err) {
@@ -35,11 +38,16 @@ async function sendQrCode(content, date) {
                 // d'en demander un autre en passant la nouvelle token
                 register(localStorage.getItem('fcm_token'));
                 throw new InvalidCitoyenIdError();
+            } else {
+                offlineQrCodes.delete(content);
             }
             throw new InvalidQrCodeError();
         } else if(status === 401) {
             throw new AlreadyScannedError();
         }
+        // Le problème ne vient pas du contenu du code QR, on doit le sauvegarder essayer de
+        // l'envoyer plus tard
+        offlineQrCodes.add(content, isoDate);
         throw new HttpError(err.response?.data.message || err.message, status);
     }
 }

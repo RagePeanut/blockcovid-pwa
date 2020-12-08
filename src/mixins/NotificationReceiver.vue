@@ -22,7 +22,6 @@ export default {
                 this.fcmToken = await firebase.messaging().getToken({
                     vapidKey: process.env.VUE_APP_FIREBASE_MESSAGING_KEY,
                 });
-                console.log('Token:', this.fcmToken);
                 const storedToken = localStorage.getItem('fcm_token');
                 if(storedToken !== this.fcmToken) {
                     await persistStorage();

@@ -7,11 +7,11 @@ db.version(1).stores({
 });
 
 export default {
-    add: async (content) => {
+    add: async (content, date) => {
         try {
             await db.qrCodes.add({
                 content,
-                date: new Date().toISOString(),
+                date: date || new Date().toISOString(),
             });
         } catch {
             // Silent catch

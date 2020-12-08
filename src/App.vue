@@ -98,7 +98,6 @@ export default {
             }
         },
         async handleSuccess(decoded) {
-            console.log('Decoded:', decoded);
             if(!this.online) {
                 offlineQrCodes.add(decoded);
                 this.queueInfoSnackbar('Votre scan a été pris en compte et sera envoyé lorsque vous serez en ligne');

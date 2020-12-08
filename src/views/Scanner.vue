@@ -1,25 +1,25 @@
 <template>
-        <QrcodeStream @decode="onDecode"
-                      @init="onInit"
-                      :torch="torchActive">
-            <v-container fill-height>
-                <v-layout align-center justify-center>
-                    <div v-if="loading" class="d-flex flex-column align-center">
-                        <h1 class="primary--text loading-text pb-4 text-center">Lancement de la caméra...</h1>
-                        <v-progress-circular indeterminate color="primary" :size="40" :width="3"/>
-                    </div>
-                    <div v-else class="d-flex align-end justify-center pb-4 overlay">
-                        <v-btn v-if="torchSupported"
-                               @click="switchTorch"
-                               fab
-                               x-large>
-                            <v-icon v-if="torchActive">mdi-flashlight</v-icon>
-                            <v-icon v-else>mdi-flashlight-off</v-icon>
-                        </v-btn>
-                    </div>
-                </v-layout>
-            </v-container>
-        </QrcodeStream>
+    <QrcodeStream @decode="onDecode"
+                    @init="onInit"
+                    :torch="torchActive">
+        <v-container fill-height>
+            <v-layout align-center justify-center>
+                <div v-if="loading" class="d-flex flex-column align-center">
+                    <h1 class="primary--text loading-text pb-4 text-center">Lancement de la caméra...</h1>
+                    <v-progress-circular indeterminate color="primary" :size="40" :width="3"/>
+                </div>
+                <div v-else class="d-flex align-end justify-center pb-4 overlay">
+                    <v-btn v-if="torchSupported"
+                            @click="switchTorch"
+                            fab
+                            x-large>
+                        <v-icon v-if="torchActive">mdi-flashlight</v-icon>
+                        <v-icon v-else>mdi-flashlight-off</v-icon>
+                    </v-btn>
+                </div>
+            </v-layout>
+        </v-container>
+    </QrcodeStream>
 </template>
 
 <script>

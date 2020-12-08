@@ -102,7 +102,7 @@ describe('Scanner.vue', () => {
     describe('onInit is called', () => {
         it('doesn\'t emit any error when the initPromise resolves', async () => {
             // Action
-            await wrapper.vm.onInit(Promise.resolve());
+            await wrapper.vm.onInit(Promise.resolve({ capabilities: {} }));
             await wrapper.vm.$nextTick();
             // Test
             expect(wrapper.emitted().error).toBeUndefined();            
@@ -114,6 +114,7 @@ describe('Scanner.vue', () => {
             await wrapper.vm.$nextTick();
             // Test
             expect(wrapper.emitted().error).toBeTruthy();
+
         });
 
         it('calls navigateBack when the initPromise rejects', async () => {

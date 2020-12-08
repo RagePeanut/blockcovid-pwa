@@ -114,7 +114,6 @@ describe('Scanner.vue', () => {
             await wrapper.vm.$nextTick();
             // Test
             expect(wrapper.emitted().error).toBeTruthy();
-
         });
 
         it('calls navigateBack when the initPromise rejects', async () => {

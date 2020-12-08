@@ -1,6 +1,8 @@
 import Axios from 'axios';
 
+import AlreadyScannedError from "../errors/AlreadyScannedError";
 import HttpError from '../errors/HttpError';
+import InvalidCitoyenIdError from "../errors/InvalidCitoyenIdError";
 import InvalidQrCodeError from '../errors/InvalidQrCodeError';
 import { persistStorage } from '../utils/misc';
 
@@ -30,7 +32,7 @@ async function sendQrCode(content, date) {
         if(status === 422) {
             throw new InvalidQrCodeError();
         } else if(status === 401) {
-            throw new Error('Ce code QR a déjà été scanné');
+            throw new AlreadyScannedError();
         }
         throw new HttpError(err.response?.message || err.message, status);
     }
@@ -63,7 +65,7 @@ async function updateToken(token, uuid) {
             // L'ID citoyen a été altéré par l'utilisateur, on n'a pas d'autre choix que
             // d'en demander un autre en passant la nouvelle token
             register(token);
-            throw new Error('ID citoyen invalide');
+            throw new InvalidCitoyenIdError();
         }
         throw new HttpError(err.response?.message || err.message, status);
     }

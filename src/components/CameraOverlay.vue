@@ -4,8 +4,8 @@
                 @click="torchButtonClicked"
                 fab
                 x-large>
-            <v-icon v-if="torchActive">mdi-flashlight</v-icon>
-            <v-icon v-else>mdi-flashlight-off</v-icon>
+            <v-icon v-if="torchActive" ref="torch-on">mdi-flashlight</v-icon>
+            <v-icon v-else ref="torch-off">mdi-flashlight-off</v-icon>
         </v-btn>
     </div>
 </template>

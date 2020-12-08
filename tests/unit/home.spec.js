@@ -1,5 +1,7 @@
-import Home from '@/views/Home.vue';
 import { mount } from '@vue/test-utils';
+
+import Home from '@/views/Home';
+import ScanQrButton from '@/components/ScanQrButton';
 
 const $router = {
     push: jest.fn(),
@@ -23,7 +25,7 @@ describe('Home.vue', () => {
 
     it('pushes to /scanner when the scan button is clicked', async () => {
         // Action
-        await wrapper.find('.v-btn').trigger('click');
+        await wrapper.findComponent(ScanQrButton).trigger('click');
         // Test
         expect($router.push).toHaveBeenLastCalledWith('/scanner');
     });

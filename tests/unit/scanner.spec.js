@@ -55,7 +55,9 @@ describe('Scanner.vue', () => {
     describe('onDecode is called', () => {
         it('doesn\'t update decoded when the argument is empty', () => {
             // Setup
-            wrapper.vm.$data.decoded = 'previouslyDecoded';
+            wrapper.setData({
+                decoded: 'previouslyDecoded',
+            });
             // Action
             wrapper.vm.onDecode('');
             // Test
@@ -64,22 +66,26 @@ describe('Scanner.vue', () => {
 
         it('doesn\'t emit a success event when the argument is empty', async () => {
             // Setup
-            wrapper.vm.$data.decoded = 'previouslyDecoded';
+            wrapper.setData({
+                decoded: 'previouslyDecoded',
+            });
             // Action
             wrapper.vm.onDecode('');
             await wrapper.vm.$nextTick();
             // Test
-            expect(wrapper.emitted().success).toBeUndefined();
+            expect(wrapper.emitted('success')).toBeUndefined();
         });
 
         it('doesn\'t emit a success event when the argument is the same as the data', async () => {
             // Setup
-            wrapper.vm.$data.decoded = 'decoded';
+            wrapper.setData({
+                decoded: 'decoded',
+            });
             // Action
             wrapper.vm.onDecode('decoded');
             await wrapper.vm.$nextTick();
             // Test
-            expect(wrapper.emitted().success).toBeUndefined();
+            expect(wrapper.emitted('success')).toBeUndefined();
         });
 
         it('updates decoded', () => {
@@ -94,8 +100,8 @@ describe('Scanner.vue', () => {
             wrapper.vm.onDecode('decoded');
             await wrapper.vm.$nextTick();
             // Test
-            expect(wrapper.emitted().success).toBeTruthy();
-            expect(wrapper.emitted().success[0]).toEqual(['decoded']);
+            expect(wrapper.emitted('success')).toBeTruthy();
+            expect(wrapper.emitted('success')[0]).toEqual(['decoded']);
         });
     });
 
@@ -105,7 +111,7 @@ describe('Scanner.vue', () => {
             await wrapper.vm.onInit(Promise.resolve({ capabilities: {} }));
             await wrapper.vm.$nextTick();
             // Test
-            expect(wrapper.emitted().error).toBeUndefined();            
+            expect(wrapper.emitted('error')).toBeUndefined();            
         });
 
         it('emits an error when the initPromise rejects', async () => {
@@ -113,7 +119,7 @@ describe('Scanner.vue', () => {
             await wrapper.vm.onInit(Promise.reject(new Error()));
             await wrapper.vm.$nextTick();
             // Test
-            expect(wrapper.emitted().error).toBeTruthy();
+            expect(wrapper.emitted('error')).toBeTruthy();
         });
 
         it('calls navigateBack when the initPromise rejects', async () => {

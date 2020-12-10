@@ -72,8 +72,12 @@ export default {
 
         messaging.onMessage(payload => {
             const { title, body } = payload.notification;
-            new Notification(title, {
-                body,
+            // DEPRECATED ON MOBILE
+            // new Notification(title, {
+            //     body,
+            // });
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations[0].showNotification(title, { body });
             });
         });
 

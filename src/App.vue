@@ -61,7 +61,6 @@ export default {
             }
         },
         async fcmToken() {
-            if(localStorage.getItem('uuid')) return;
             try {
                 await this.$api.register(this.fcmToken);
                 // Gestion du passage en online alors que l'application a été lancée en offline

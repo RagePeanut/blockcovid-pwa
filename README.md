@@ -1,4 +1,4 @@
-# blockcovid-pwa
+# blockcovid-pwa - made for school project
 
 ## Tester les notifications
 Les variables d'environnement sont déjà placées dans le fichier .env donc vous ne devez rien changer.
